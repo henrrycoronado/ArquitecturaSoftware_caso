@@ -1,0 +1,17 @@
+Proyecto creado con .net9 usando :
+    - dotnet new webapi -n nombreProyecto
+
+se instala packages con :
+    dotnet add package Swashbuckle.AspNetCore 
+        (para poder ver, visualmente los endpoints)
+
+
+compilacion y ejecucion con:
+    dotnet build (para descargar dependencias)
+    dotnet run (para ejecutar)
+
+NOTA: Dentro de la ruta raiz, se debe acceder a la ruta "/swagger" para ver los endpoints disponibles y creados
+
+recursos:
+    link del diagrama corregido: 
+    link del repositorio: https://github.com/henrrycoronado/ArquitecturaSoftware_caso.git
