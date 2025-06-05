@@ -10,8 +10,8 @@ compilacion y ejecucion con:
     dotnet build (para descargar dependencias)
     dotnet run (para ejecutar)
 
-NOTA: Dentro de la ruta raiz, se debe acceder a la ruta "/swagger" para ver los endpoints disponibles y creados
+NOTA: Compo opcion, dentro de la ruta raiz, se debe acceder a la ruta "/swagger" para ver los endpoints disponibles y creados
 
 recursos:
-    link del diagrama corregido: 
+    link del diagrama corregido: https://drive.google.com/file/d/1eJZ3WpJmXt_EU5JT0qCFoGz-vosooCYX/view?usp=sharing
     link del repositorio: https://github.com/henrrycoronado/ArquitecturaSoftware_caso.git

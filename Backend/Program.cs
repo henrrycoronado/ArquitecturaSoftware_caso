@@ -8,7 +8,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddScoped<IUsuarioUseCases, UsuarioUseCases>();
 builder.Services.AddScoped<IEventoUseCases, EventoUseCases>();
 builder.Services.AddScoped<IInscripcionUseCases, InscripcionUseCases>();
