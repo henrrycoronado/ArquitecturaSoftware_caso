@@ -9,70 +9,52 @@ namespace AppBackend.Controllers;
     public class EventoController : ControllerBase
     {
         private readonly IEventoUseCases _eventoUseCases;
-        private readonly IUsuarioUseCases _usuarioUseCases;
-        private readonly IInscripcionUseCases _inscripcionUseCases;
 
-        public EventoController(IEventoUseCases eventoUseCases, IUsuarioUseCases usuarioUseCases, IInscripcionUseCases inscripcionUseCases)
+        public EventoController(IEventoUseCases eventoUseCases)
         {
             _eventoUseCases = eventoUseCases;
-            _usuarioUseCases = usuarioUseCases;
-            _inscripcionUseCases = inscripcionUseCases;
         }
 
-        [HttpGet]
+        [HttpGet("/Eventos")]
         public IActionResult GetEventos()
         {
-            var eventos = _eventoUseCases.GetEventos();
-            return Ok(eventos);
+            var resp = _eventoUseCases.GetEventos();
+            return Ok(resp);
+        }
+        [HttpPost("/Eventos/Crear")]
+        public IActionResult CrearEventos([FromBody] NewEvento evento)
+        {
+            var resp = _eventoUseCases.CreateEvento(evento.Nombre, evento.Fecha, evento.Capacidad, evento.Costo);
+            if(resp){
+                return Ok("evento creado con exito, puedes revisarlo en la lista");
+            }
+            return Ok("evento no creado, revisa tus parametros");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/Eventos/{id}")]
         public IActionResult GetEvento(int id)
         {
-            var evento = _eventoUseCases.GetEvento(id);
-            if (evento == null)
-                return NotFound("Evento no encontrado");
-            return Ok(evento);
-        }
-
-        [HttpPost("registrar")]
-        public IActionResult RegistrarEnEvento([FromBody] RegistrarEventoRequest request)
-        {
-            var evento = _eventoUseCases.GetEvento(request.IdEvento);
-            if (evento == null)
-                return NotFound("Evento no encontrado");
-            if (evento.Fecha < DateTime.Now)
-                return BadRequest("No se puede registrar en eventos pasados");
-            if (evento.registros.Any(u => u.Ci == request.CiUsuario))
-                return BadRequest("El usuario ya está registrado en este evento");
-            if (evento.registros.Count >= evento.Capacidad)
-                return BadRequest("El evento ha alcanzado su capacidad máxima");
-            var usuario = _usuarioUseCases.GetUsuarios().FirstOrDefault(u => u.Ci == request.CiUsuario);
-            if (usuario == null)
-            {
-                usuario = new Usuario { Nombre = request.NombreUsuario, Ci = request.CiUsuario };
-                _usuarioUseCases.CreateUsuario(usuario);
+            var resp = _eventoUseCases.GetEvento(id);
+            if(resp!=null){
+                return Ok(resp);
             }
-            var inscripcion = new Inscripcion { IdUsuario = usuario.Id, IdEvento = evento.Id, Estado = true };
-            _inscripcionUseCases.CreateInscripcion(inscripcion);
-            evento.registros.Add(usuario);
-            _eventoUseCases.UpdateEvento(evento);
-            return Ok("Registro exitoso");
+            return Ok("Evento no encontrado");
         }
 
-        [HttpGet("{id}/usuarios")]
-        public IActionResult GetUsuariosRegistrados(int id)
+        [HttpPost("/Eventos/{id}/registrar")]
+        public IActionResult RegistrarEnEvento(int id, string ci)
         {
-            var evento = _eventoUseCases.GetEvento(id);
-            if (evento == null)
-                return NotFound("Evento no encontrado");
-            return Ok(evento.registros);
+            var resp = _eventoUseCases.RegistrarEnEvento(id, ci);
+            if(resp){
+                return Ok("Registrado con exito");
+            }
+            return Ok("No se pudo registrar, revisa tus parametros");
         }
     }
 
-    public class RegistrarEventoRequest
-    {
-        public int IdEvento { get; set; }
-        public string NombreUsuario { get; set; } = null!;
-        public string CiUsuario { get; set; } = null!;
+    public class NewEvento{
+        public string Nombre { get; set; } = null!;
+        public DateTime Fecha { get; set; }
+        public int Capacidad { get; set; }
+        public double? Costo { get; set; }
     }

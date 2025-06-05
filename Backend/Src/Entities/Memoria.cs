@@ -12,7 +12,7 @@ public static class Memoria
     public static List<Inscripcion> Inscripciones = new List<Inscripcion>();
     public static List<Pago> Pagos = new List<Pago>();
 
-    public static bool Add(object item){
+    public static int Add(object item){
         try
         {
             switch (item)
@@ -21,31 +21,30 @@ public static class Memoria
                     _idEvento++;
                     e.Id = _idEvento;
                     Eventos.Add(e);
-                    break;
+                    return _idEvento;
                 case Usuario u:
                     _idUsuario++;
                     u.Id = _idUsuario;
                     Usuarios.Add(u);
-                    break;
+                    return _idUsuario;
                 case Inscripcion i:
                     _idInscripcion++;
                     i.Id = _idInscripcion;
                     Inscripciones.Add(i);
-                    break;
+                    return _idInscripcion;
                 case Pago p:
                     _idPago++;
                     p.Id = _idPago;
                     Pagos.Add(p);
-                    break;
+                    return _idPago;
                 default:
-                    return false;
+                    return -1;
             }
-            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return false;
+            return -1;
         }
     }
 
@@ -90,4 +89,55 @@ public static class Memoria
         }
     }
 
+    public static Object? Find(int id, string type){
+        switch (type){
+            case "Evento":
+                return Eventos.Find(e => e.Id == id);
+            case "Usuario":
+                return Usuarios.Find(u => u.Id == id);
+            case "Inscripcion":
+                return Inscripciones.Find(i => i.Id == id);
+            case "Pago":
+                return Pagos.Find(p => p.Id == id);
+            default:
+                return null;
+        }
+    }
+    public static List<Object> GetAll(string type){
+        switch (type){
+            case "Evento":
+                return new List<Object>(Eventos);
+            case "Usuario":
+                return new List<Object>(Usuarios);
+            case "Inscripcion":
+                return new List<Object>(Inscripciones);
+            case "Pago":
+                return new List<Object>(Pagos);
+            default:
+                return new List<Object>();
+        }
+    }
+
+    public static List<Inscripcion> InscripcionUsuario(int id){
+        return Inscripciones.FindAll(i => i.IdUsuario == id);
+    }
+
+    public static int GetIdUser(string ci){
+        var user = Usuarios.Find(u => u.Ci == ci);
+        if(user != null){
+            return user.Id;
+        }return -1;
+    }
+
+    public static bool AddInscripcionEvento(int idEvento, Usuario user){
+        for(int i = 0; i < Eventos.Count; i++){
+            if(Eventos[i].Id == idEvento){
+                if(Eventos[i].registros.Count < Eventos[i].Capacidad){
+                    Eventos[i].registros.Add(user);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
